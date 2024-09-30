@@ -23,6 +23,10 @@ public class Video {
 	/*@ManyToOne
 	private Course course;*/
 	
+	public Video() {
+		super();
+	}
+	
 	public Video(String videoId, String title, String description, String contentType, String path) {
 		super();
 		this.videoId = videoId;
@@ -31,7 +35,7 @@ public class Video {
 		this.contentType = contentType;
 		this.path = path;
 	}
-	
+
 	public String getVideoId() {
 		return videoId;
 	}
