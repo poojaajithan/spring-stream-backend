@@ -1,5 +1,6 @@
 package com.stream.app.spring_stream_backend.services.impl;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -18,6 +19,8 @@ import com.stream.app.spring_stream_backend.entities.Video;
 import com.stream.app.spring_stream_backend.repositories.VideoRepository;
 import com.stream.app.spring_stream_backend.services.VideoService;
 
+import jakarta.annotation.PostConstruct;
+
 @Service
 public class VideoServiceImpl implements VideoService {
 	
@@ -26,6 +29,25 @@ public class VideoServiceImpl implements VideoService {
 	
 	@Value("${files.video}")
 	String DIR;
+	
+	
+
+	public VideoServiceImpl(VideoRepository videoRepository) {
+		super();
+		this.videoRepository = videoRepository;
+	}
+	
+	@PostConstruct
+	public void init() {
+		File file = new File(DIR);
+		if (!file.exists()) {
+			file.mkdir();
+			System.out.println("Folder created");
+		}
+		else {
+			System.out.println("Folder already created");
+		}
+	}
 
 	@Override
 	public Video save(Video video, MultipartFile file) {
