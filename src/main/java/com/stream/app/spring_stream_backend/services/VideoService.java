@@ -2,12 +2,9 @@ package com.stream.app.spring_stream_backend.services;
 
 import java.util.List;
 
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.stream.app.spring_stream_backend.entities.Video;
 
-@Service
 public interface VideoService {
 	
 	//save video
