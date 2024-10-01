@@ -1,5 +1,8 @@
 package com.stream.app.spring_stream_backend.payload;
 
+import lombok.Builder;
+
+@Builder
 public class CustomMessage {
 	private String message;
 	private boolean success=false;
