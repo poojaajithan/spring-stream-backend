@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.stream.app.spring_stream_backend.AppConstants;
 import com.stream.app.spring_stream_backend.entities.Video;
 import com.stream.app.spring_stream_backend.payload.CustomMessage;
 import com.stream.app.spring_stream_backend.services.VideoService;
@@ -101,9 +102,10 @@ public class VideoController {
 		long rangeStart=0, rangeEnd=0;
 		String [] ranges = range.replace("bytes ", "").split("-");
 		rangeStart = Long.parseLong(ranges[0]);
-		if (range.length()>1) {
-			rangeEnd = Math.min(fileLength-1, Long.parseLong(ranges[1]));
-		}
+		rangeEnd = rangeStart + AppConstants.CHUNK_SIZE-1;
+		if (rangeEnd >= fileLength) {
+            rangeEnd = fileLength - 1;
+        }
 		System.out.println("range start : " + rangeStart);
         System.out.println("range end : " + rangeEnd);
         
