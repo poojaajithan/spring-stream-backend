@@ -116,19 +116,32 @@ public class VideoServiceImpl implements VideoService {
 		String filePath = video.getPath();
 		Path videoPath = Paths.get(filePath);
 		
-		String output360p = HSL_DIR + videoId + "/360p/";
-		String output720p = HSL_DIR + videoId + "/720p/";
-		String output1080p = HSL_DIR + videoId + "/1080p/";
-		
+		Path outputPath = Paths.get(HSL_DIR, videoId);
+   
 		try {
-			Files.createDirectories(Paths.get(output360p));
-			Files.createDirectories(Paths.get(output720p));
-			Files.createDirectories(Paths.get(output1080p));
+			Files.createDirectories(outputPath);
+			
+			String ffmpegCmd = String.format(
+                    "ffmpeg -i \"%s\" -c:v libx264 -c:a aac -strict -2 -f hls -hls_time 10 -hls_list_size 0 -hls_segment_filename \"%s/segment_%%3d.ts\"  \"%s/master.m3u8\" ",
+                    videoPath, outputPath, outputPath
+            );
+			System.out.println(ffmpegCmd);
+			
+			ProcessBuilder processBuilder = new ProcessBuilder("bin/bash", "-c", ffmpegCmd.toString());
+			processBuilder.inheritIO();
+			Process process = processBuilder.start();
+			int exit = process.waitFor();
+			if (exit != 0) {
+				throw new RuntimeException("video processing failed!!");
+			}
+			 return videoId;
 		}
 		catch(IOException ie) {
 			throw new RuntimeException("Video processing failed.");
 		}
-		return null;
+		catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 	}
 
 }
