@@ -32,8 +32,8 @@ public class VideoServiceImpl implements VideoService {
 	@Value("${files.video}")
 	String DIR;
 	
-	@Value("${file.video.hsl}")
-	String HSL_DIR;
+	@Value("${file.video.hls}")
+	String HLS_DIR;
 	
 	
 
@@ -46,7 +46,7 @@ public class VideoServiceImpl implements VideoService {
 	public void init() {
 		File file = new File(DIR);
 		try {
-			Files.createDirectories(Paths.get(HSL_DIR));
+			Files.createDirectories(Paths.get(HLS_DIR));
 		}
 		catch (IOException e) {
 			throw new RuntimeException(e);
@@ -117,7 +117,7 @@ public class VideoServiceImpl implements VideoService {
 		String filePath = video.getPath();
 		Path videoPath = Paths.get(filePath);
 		
-		Path outputPath = Paths.get(HSL_DIR, videoId);
+		Path outputPath = Paths.get(HLS_DIR, videoId);
    
 		try {
 			Files.createDirectories(outputPath);
