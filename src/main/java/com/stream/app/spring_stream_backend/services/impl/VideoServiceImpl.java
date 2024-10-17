@@ -84,7 +84,8 @@ public class VideoServiceImpl implements VideoService {
 			video.setContentType(contentType);
 			video.setPath(path.toString());
 			Video savedVideo = videoRepository.save(video);
-			
+			 //processing video
+            processVideo(savedVideo.getVideoId());
 			return savedVideo;
 		}
 		catch (IOException e) {
@@ -122,14 +123,25 @@ public class VideoServiceImpl implements VideoService {
 			Files.createDirectories(outputPath);
 			
 			String ffmpegCmd = String.format(
-                    "ffmpeg -i \"%s\" -c:v libx264 -c:a aac -strict -2 -f hls -hls_time 10 -hls_list_size 0 -hls_segment_filename \"%s/segment_%%3d.ts\"  \"%s/master.m3u8\" ",
-                    videoPath, outputPath, outputPath
-            );
+			        "ffmpeg -i \"%s\" -c:v libx264 -c:a aac -strict -2 -f hls -hls_time 10 -hls_list_size 0 -hls_segment_filename \"%s/segment_%%3d.ts\"  \"%s/master.m3u8\" ",
+			        videoPath, outputPath, outputPath
+			);
 			System.out.println(ffmpegCmd);
-			
-			ProcessBuilder processBuilder = new ProcessBuilder("bin/bash", "-c", ffmpegCmd.toString());
+
+			// Directly use ffmpeg command without /bin/bash
+			ProcessBuilder processBuilder = new ProcessBuilder("C:\\ffmpeg-7.1-essentials_build\\bin\\ffmpeg.exe", "-i", videoPath.toString(),
+			        "-c:v", "libx264",
+			        "-c:a", "aac",
+			        "-strict", "-2",
+			        "-f", "hls",
+			        "-hls_time", "10",
+			        "-hls_list_size", "0",
+			        "-hls_segment_filename", outputPath + "/segment_%3d.ts",
+			        outputPath + "/master.m3u8"
+			);
 			processBuilder.inheritIO();
 			Process process = processBuilder.start();
+
 			int exit = process.waitFor();
 			if (exit != 0) {
 				throw new RuntimeException("video processing failed!!");
